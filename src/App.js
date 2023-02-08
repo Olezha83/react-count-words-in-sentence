@@ -1,11 +1,14 @@
-import { useState } from 'react'
-import './App.css'
+import { useRef, useState } from 'react'
 import { Answer, Form, Head } from './components'
+import countWords from './utils/countWords'
+import './App.css'
 
 function App() {
   const [text, setText] = useState('')
   const [wordsCount, setWordsCount] = useState('')
   const [error, setError] = useState(false)
+
+  const inputRef = useRef(null)
 
   const onChangeHandler = (event) => {
     setText(event.target.value)
@@ -17,23 +20,20 @@ function App() {
     setError(false)
   }
 
-  const countWords = () => {
-    const spaces = text.trim().replace(/ {2,}/g, ' ').match(/ /g)
-    return spaces ? `${spaces.length + 1} words` : 'only one word'
-  }
-
   const onSubmitHandler = (event) => {
     event.preventDefault()
+    inputRef.current.blur()
     if (!text) {
       return setError(true)
     }
-    setWordsCount(countWords())
+    setWordsCount(countWords(text))
   }
 
   return (
     <div className="App">
       <Head />
       <Form
+        ref={inputRef}
         value={text}
         onFocus={onFocusHandler}
         onChange={onChangeHandler}
